@@ -127,3 +127,6 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+rabbit/user
+rabbit/pass
+rabbit/cookie

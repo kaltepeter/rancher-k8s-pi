@@ -13,3 +13,25 @@ Flash each SD card with Ubuntu [21.04](https://ubuntu.com/download/raspberry-pi/
 
 ### Recommended Hardware:
 2 or more Raspberry Pi 4 8GB
+
+## Generating Files from templates
+
+There is a script `generate-from-template.sh` that will take variables from your `.env` file and output a completed file. You can than redirect that output to a file system location or copy the output.
+
+1. `cp ./.env.example ./.env` and edit env variables to fit your needs
+1. For each file needed (input_file: template to process, output_file: where to write):
+    1. `sh ./generate-from-template.sh <input_file>` to get output in console (test)
+    1. `sh ./generate-from-template.sh <input_file> > <output_file>` to write to the <output_file> location.
+
+### Note to use your ssh public key for access from another machine
+
+1. To generate a key called pk8s1 (replace 127.0.0.1 with target machine ip)
+
+    ```bash
+    ssh-keygen -t rsa -C ubuntu@127.0.0.1 -f ~/.ssh/pk8s1
+    cat ~/.ssh/pk8s1.pub | ssh ubuntu@127.0.0.1 'cat >> .ssh/authorized_keys'
+    ```
+
+1. `pbcopy < ~/.ssh/pk8s1.pub` This is copy to clipboard. Use that as the env var.
+
+1. `ssh -i ~/.ssh/pk8s1 ubuntu@127.0.0.1` to login with the named key after your node is up.
