@@ -1,0 +1,13 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: mq-client
+  namespace: default
+spec:
+  type: ExternalName
+  externalName: rabbitmq-client.test-rabbitmq.svc.cluster.local
+  ports:
+  - port: 15672
+    name: http
+  - port: 5672
+    name: amqp

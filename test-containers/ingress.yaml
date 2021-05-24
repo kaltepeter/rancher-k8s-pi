@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: example-ingress
+  namespace: default
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - http:
+      paths:
+        - path: /mq
+          backend:
+            serviceName: rabbitmq-client
+            servicePort: 5672
+        - path: /mq-ui
+          backend:
+            serviceName: rabbitmq-client
+            servicePort: 15672
+        - path: /hue-socket
+          backend:
+            serviceName: hue-socket-service
+            servicePort: 8080
+        - path: /hue-socket-ui
+          backend:
+            serviceName: hue-socket-ui-service
+            servicePort: 8081
+            
