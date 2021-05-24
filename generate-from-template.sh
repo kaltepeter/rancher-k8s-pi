@@ -13,4 +13,4 @@ set -o allexport
 source "${__dir}/.env" 
 set +o allexport
 
-envsubst < "${input_file}"
+envsubst \$rancher_mgmt_ip,\$rancher_node_ip,\$network_gateway,\$dns,\$wifi_ssid,\$wifi_pw,\$rancher_mgmt_ssh_key,\$rancher_node_ssh_key < "${input_file}"

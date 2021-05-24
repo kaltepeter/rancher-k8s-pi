@@ -11,7 +11,13 @@ Replace `/Volumes/system-boot` with your disk location. It should end up in the 
 
 1. Use static ip and wifi config
 
-    `sh ./generate-from-template.sh ./cloud-init/network-config.template > /Volumes/system-boot/network-config` to write to a location.
+    For the rancher-mgmt:
+
+    `sh ./generate-from-template.sh ./cloud-init/network-config-mgmt.template > /Volumes/system-boot/network-config` to write to a location.
+
+    For the rancher-node:
+
+    `sh ./generate-from-template.sh ./cloud-init/network-config-node.template > /Volumes/system-boot/network-config` to write to a location.
 
 1. Use ssh key auth
 

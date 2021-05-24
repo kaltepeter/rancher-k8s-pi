@@ -23,7 +23,7 @@ users:
   ssh_import_id: None
   ssh_pwauth: false
   ssh_authorized_keys:
-      - ${rancher_node_ssh_key}
+      - ${rancher_mgmt_ssh_key}
 
 # Enable password authentication with the SSH daemon
 ssh_pwauth: true
@@ -33,7 +33,7 @@ groups:
 - ubuntu: [ubuntu]
 - docker: [docker]
 
-hostname: rancher-node
+hostname: rancher-mgmt
 manage_etc_hosts: true
 locale: "en_US.UTF-8"
 timezone: "America/Chicago"
@@ -41,10 +41,10 @@ timezone: "America/Chicago"
 apt:
  preserve_sources_list: true
  sources:
-  docker.list:
-    source: "deb [arch=arm64] https://download.docker.com/linux/ubuntu $RELEASE stable"
-    keyid: 0EBFCD88
-    filename: docker.list
+   docker.list:
+     source: "deb [arch=arm64] https://download.docker.com/linux/ubuntu $RELEASE stable"
+     keyid: 0EBFCD88
+     filename: docker.list
 
 ## Write arbitrary files to the file-system (including binaries!)
 write_files:
@@ -73,6 +73,21 @@ write_files:
 
         eth0: \4{eth0}
         wlan0: \4{wlan0}
+    permissions: '0644'
+    owner: root:root
+  - path: /etc/exports
+    content: |
+      # /etc/exports: the access control list for filesystems which may be exported
+      #		to NFS clients.  See exports(5).
+      #
+      # Example for NFSv2 and NFSv3:
+      # /srv/homes       hostname1(rw,sync,no_subtree_check) hostname2(ro,sync,no_subtree_check)
+      #
+      # Example for NFSv4:
+      # /srv/nfs4        gss/krb5i(rw,sync,fsid=0,crossmnt,no_subtree_check)
+      # /srv/nfs4/homes  gss/krb5i(rw,sync,no_subtree_check)
+      #
+      /srv/k8s	*(rw,no_root_squash,insecure,async,no_subtree_check,anonuid=1001,anongid=1001)
     permissions: '0644'
     owner: root:root
 
@@ -120,7 +135,7 @@ packages:
   - wget
 
 bootcmd:
-  - sudo /usr/bin/date -s '14 May 2021 06:00'
+  - mkdir -p /srv/k8s
 
 runcmd:
   - [ /usr/sbin/ntpdate, pool.ntp.org ]
@@ -131,6 +146,7 @@ runcmd:
   - sudo systemctl start nfs-server
   - sudo systemctl enable docker
   - sudo systemctl start docker
+  - sudo docker run --privileged -d --restart=unless-stopped --name rancher -p 80:80 -p 443:443 --mount type=bind,source=/srv/rancher,target=/var/lib/rancher rancher/rancher:v2.5.7
 
 ## poweroff or reboot system after finished
 # default: none
